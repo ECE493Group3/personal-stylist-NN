@@ -3,6 +3,8 @@
 
 import tensorflow as tf
 
+from attribute_positive_weights import ATTRIBUTE_WEIGHTS
+
 SIZE = 224
 N_LABELS = 3
 N_ATTRIBUTES = 1000
@@ -261,7 +263,8 @@ def attribute_tagging_model(features, labels, mode):
 
     # Calculate Loss (for both TRAIN and EVAL modes)
     xentropies = tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits)
-    loss = tf.reduce_mean(xentropies)
+    weighted_xentropies = xentropies * ATTRIBUTE_WEIGHTS
+    loss = tf.reduce_sum(weighted_xentropies)
 
     # Configure the Training Op (for TRAIN mode)
     if mode == tf.estimator.ModeKeys.TRAIN:
